@@ -12,9 +12,8 @@ public class Main {
 
         for(int i=0; i<numOfMeetings; i++){
             StringTokenizer st = new StringTokenizer(bf.readLine(), " ");
-            for(int j=0; j<2; j++){
-                meetingTimes[i][j] = Integer.parseInt(st.nextToken());
-            }
+            meetingTimes[i][0] = Integer.parseInt(st.nextToken());
+            meetingTimes[i][1] = Integer.parseInt(st.nextToken());
         }
 
         Arrays.sort(meetingTimes, new Comparator<int[]>() {
