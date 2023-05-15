@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.Arrays;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -14,27 +14,24 @@ public class Main {
         int cardCount = Integer.parseInt(st.nextToken());
         int cardCombinationCount = Integer.parseInt(st.nextToken());
 
-        long[] cardArr = new long[cardCount];
-
+        PriorityQueue<Long> pq = new PriorityQueue<>();
+        
         st = new StringTokenizer(bf.readLine(), " ");
 
         for(int i=0; i<cardCount; i++){
-            cardArr[i] = Integer.parseInt(st.nextToken());
+            pq.offer(Long.parseLong(st.nextToken()));
         }
 
-        Arrays.sort(cardArr);
-
         for(int i=0; i<cardCombinationCount; i++) {
-            long temp = cardArr[0] + cardArr[1];
-            cardArr[0] = temp;
-            cardArr[1] = temp;
-            Arrays.sort(cardArr);
+            long temp = pq.poll() + pq.poll();
+            pq.offer(temp);
+            pq.offer(temp);
         }
 
         long minSum = 0;
 
         for(int i=0; i<cardCount; i++){
-            minSum += cardArr[i];
+            minSum += pq.poll();
         }
 
         bw.write(String.valueOf(minSum));
