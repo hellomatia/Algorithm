@@ -13,39 +13,12 @@ public class Main {
         int[] houseArr = new int[numOfHouse];
 
         StringTokenizer st = new StringTokenizer(bf.readLine(), " ");
-
-//        double sum = 0;
-
+        
         for(int i=0; i<numOfHouse; i++) {
             houseArr[i] = Integer.parseInt(st.nextToken());
-            //sum += houseArr[i];
         }
 
         Arrays.sort(houseArr);
-
-
-/*
-        double middlePoint = sum/numOfHouse;
-        double minGap = Double.MAX_VALUE;
-        int optimalLocation = -1;
-
-
-
-        for(int i=0; i<numOfHouse; i++) {
-            double gap;
-            if (middlePoint<=houseArr[i]) {
-                gap = houseArr[i] - middlePoint;
-            } else {
-                gap = middlePoint - houseArr[i];
-            }
-
-            if(minGap>gap) {
-                optimalLocation = houseArr[i];
-                minGap = gap;
-            }
-        }
-
- */
 
         bw.write(String.valueOf(houseArr[(numOfHouse-1)/2]));
 
