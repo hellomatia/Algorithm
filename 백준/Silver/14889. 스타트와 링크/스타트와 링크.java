@@ -4,7 +4,6 @@ import java.util.*;
 public class Main {
 
     int[][] superPower;
-    int[][] team;
     int n;
     int teamCount = 0;
     boolean[] hasTeam;
@@ -18,7 +17,6 @@ public class Main {
         n = Integer.parseInt(bf.readLine());
 
         superPower = new int[n][n];
-        team = new int[2][n/2];
         hasTeam = new boolean[n];
 
 
