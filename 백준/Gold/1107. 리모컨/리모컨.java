@@ -2,8 +2,6 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-
-
     int targetChannel;
     int targetChannelDigitCount;
     int[] button;
@@ -19,12 +17,12 @@ public class Main {
         targetChannel = Integer.parseInt(str);
         int brokenButtonCount = Integer.parseInt(bf.readLine());
 
-        ArrayList<Integer> brokenButton = new ArrayList<>();
+        boolean[] brokenButton = new boolean[10];
 
         if(brokenButtonCount>0) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
             for(int i=0; i<brokenButtonCount; i++){
-                brokenButton.add(Integer.parseInt(st.nextToken()));
+                brokenButton[Integer.parseInt(st.nextToken())] = true;
             }
         }
 
@@ -32,7 +30,7 @@ public class Main {
             button = new int[10-brokenButtonCount];
             int index = 0;
             for(int i=0; i<10; i++) {
-                if(!brokenButton.contains(i)) {
+                if(!brokenButton[i]) {
                     button[index++] = i;
                 }
             }
