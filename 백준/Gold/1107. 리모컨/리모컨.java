@@ -19,14 +19,14 @@ public class Main {
 
         boolean[] brokenButton = new boolean[10];
 
-        if(brokenButtonCount>0) {
+        if(brokenButtonCount!=0) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
             for(int i=0; i<brokenButtonCount; i++){
                 brokenButton[Integer.parseInt(st.nextToken())] = true;
             }
         }
 
-        if(brokenButtonCount<10) {
+        if(brokenButtonCount!=10) {
             button = new int[10-brokenButtonCount];
             int index = 0;
             for(int i=0; i<10; i++) {
@@ -37,14 +37,13 @@ public class Main {
         }
 
         if(brokenButtonCount == 0) {
-            minCount = Math.min(Math.abs(100-targetChannel), minCount);
-            minCount = Math.min(targetChannelDigitCount, minCount);
+            minCount = Math.min(Math.abs(100-targetChannel), targetChannelDigitCount);
         } else if (brokenButtonCount == 10){
             minCount = Math.min(Math.abs(100-targetChannel), minCount);
         } else if (targetChannel == 100) {
             minCount = 0;
         } else {
-            countButtonPress("", 0);
+            countButtonPress(0, 0);
             minCount = Math.min(Math.abs(100-targetChannel), minCount);
         }
 
@@ -55,14 +54,17 @@ public class Main {
         bw.close();
     }
 
-    public void countButtonPress(String number, int index) {
+    public void countButtonPress(int number, int count) {
+
+        if(count>targetChannelDigitCount) {
+            return;
+        }
 
         for(int i=0; i<button.length; i++) {
-            String str = number + button[i];
-            minCount = Math.min(Math.abs((targetChannel-Integer.parseInt(str)))+str.length(), minCount);
-            if(index < targetChannelDigitCount) {
-                countButtonPress(str, index+1);
-            }
+            int chanel = number*10;
+            chanel += button[i];
+            minCount = Math.min(Math.abs((targetChannel-chanel))+count+1, minCount);
+            countButtonPress(chanel, count+1);
         }
 
     }
