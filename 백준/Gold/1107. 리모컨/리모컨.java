@@ -43,18 +43,16 @@ public class Main {
             minCount = Math.min(targetChannelDigitCount, minCount);
         } else if (brokenButtonCount == 10){
             minCount = Math.min(Math.abs(100-targetChannel), minCount);
+        } else if (targetChannel == 100) {
+            minCount = 0;
         } else {
-            StringBuilder sb = new StringBuilder("");
+            StringBuilder sb = new StringBuilder();
             countButtonPress(sb, 0);
             minCount = Math.min(Math.abs(100-targetChannel), minCount);
         }
 
 
-
         bw.write(minCount + "\n");
-
-
-
 
         bw.flush();
         bw.close();
@@ -63,7 +61,7 @@ public class Main {
     public void countButtonPress(StringBuilder number, int index) {
 
         for(int i=0; i<button.length; i++) {
-            StringBuilder sb = new StringBuilder(number.toString());
+            StringBuilder sb = new StringBuilder(number);
             sb.append(button[i]);
             minCount = Math.min(Math.abs((targetChannel-Integer.parseInt(sb.toString())))+sb.length(), minCount);
             if(index < 6) {
@@ -72,6 +70,7 @@ public class Main {
         }
 
     }
+
 
     public static void main (String[] args) throws IOException {
         new Main().solution();
