@@ -39,7 +39,7 @@ public class Main {
         if(brokenButtonCount == 0) {
             minCount = Math.min(Math.abs(100-targetChannel), targetChannelDigitCount);
         } else if (brokenButtonCount == 10){
-            minCount = Math.min(Math.abs(100-targetChannel), minCount);
+            minCount = Math.abs(100-targetChannel);
         } else if (targetChannel == 100) {
             minCount = 0;
         } else {
