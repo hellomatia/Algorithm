@@ -64,7 +64,7 @@ public class Main {
             StringBuilder sb = new StringBuilder(number);
             sb.append(button[i]);
             minCount = Math.min(Math.abs((targetChannel-Integer.parseInt(sb.toString())))+sb.length(), minCount);
-            if(index < 6) {
+            if(index < targetChannelDigitCount) {
                 countButtonPress(sb, index+1);
             }
         }
