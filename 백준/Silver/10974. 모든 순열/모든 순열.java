@@ -4,10 +4,12 @@ public class Main {
     int N;
     int[] tempArr;
     boolean[] isVisit;
+    StringBuilder sb = new StringBuilder();
 
     public void solution() throws IOException {
 
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         N = Integer.parseInt(bf.readLine());
         isVisit = new boolean[N+1];
@@ -15,14 +17,21 @@ public class Main {
 
         printNumArrAll(0);
 
+        bw.write(sb.toString());
+        bw.flush();
+        bw.close();
+
+
+
     }
 
     public void printNumArrAll(int count) {
         if(count == N) {
             for(int i=0; i<N; i++) {
-                System.out.print(tempArr[i] + " ");
+                sb.append(tempArr[i]);
+                sb.append(' ');
             }
-            System.out.println();
+            sb.append('\n');
             return;
         }
 
