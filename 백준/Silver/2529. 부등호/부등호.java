@@ -8,9 +8,7 @@ public class Main {
     int[] num;
     boolean[] isUsed = new boolean[10];
     long minNum = Long.MAX_VALUE;
-    String minNumStr;
     long maxNum = Long.MIN_VALUE;
-    String maxNumStr;
     public void solution() throws IOException {
 
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
@@ -31,9 +29,16 @@ public class Main {
 
         randomNum(0);
 
-
-        bw.write(maxNumStr+"\n");
-        bw.write(minNumStr);
+        if(maxNum<Math.pow(10, k)) {
+            bw.write("0"+maxNum+"\n");
+            bw.write("0"+minNum+"\n");
+        } else if(minNum<Math.pow(10, k)) {
+            bw.write(maxNum+"\n");
+            bw.write("0"+minNum+"\n");
+        } else {
+            bw.write(maxNum+"\n");
+            bw.write(minNum+"\n");
+        }
 
         bw.flush();
         bw.close();
@@ -48,24 +53,8 @@ public class Main {
                     tempNum *= 10;
                     tempNum += num[i];
                 }
-
-                if(minNum > tempNum) {
-                    minNum = tempNum;
-                    StringBuilder sb = new StringBuilder();
-                    for(int i=0; i<n; i++) {
-                        sb.append(num[i]);
-                    }
-                    minNumStr = sb.toString();
-                }
-
-                if(maxNum < tempNum) {
-                    maxNum = tempNum;
-                    StringBuilder sb = new StringBuilder();
-                    for(int i=0; i<n; i++) {
-                        sb.append(num[i]);
-                    }
-                    maxNumStr = sb.toString();
-                }
+                minNum = Math.min(minNum, tempNum);
+                maxNum = Math.max(maxNum, tempNum);
             }
             return;
         }
