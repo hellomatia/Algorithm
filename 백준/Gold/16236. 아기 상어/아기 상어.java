@@ -4,124 +4,146 @@ import java.util.*;
 class Fish implements Comparable<Fish> {
     int x;
     int y;
-    int d;
+    int distance;
 
-    Fish(int x, int y, int d) {
+    Fish(int x, int y, int distance) {
         this.x = x;
         this.y = y;
-        this.d = d;
+        this.distance = distance;
     }
 
     @Override
     public int compareTo(Fish other) {
-        if(this.d == other.d) {
-            if(this.x == other.x) {
+        if (this.distance == other.distance) {
+            if (this.x == other.x) {
                 return this.y - other.y;
             }
             return this.x - other.x;
         }
-        return this.d - other.d;
+        return this.distance - other.distance;
     }
 }
 
-class Shark{
+class Shark {
     int x;
     int y;
     int size;
     int eatCount;
-    Shark(int x, int y, int size, int eatCount) {
+    int time;
+
+    Shark(int x, int y, int size, int eatCount, int time) {
         this.x = x;
         this.y = y;
         this.size = size;
         this.eatCount = eatCount;
+        this.time = time;
     }
 }
 
 public class Main {
     int[] dirR = {-1, 0, 1, 0}; // 상, 우, 하, 좌
     int[] dirC = {0, 1, 0, -1};
-    Shark shark;
-    PriorityQueue<Integer> fishSize;
     int N; // 가로, 세로 크기
     int[][] map;
-    boolean[][] visit;
-    int time;
+
     public void solution() throws IOException {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        fishSize = new PriorityQueue<>();
-
         N = Integer.parseInt(bf.readLine());
         map = new int[N][N];
-        visit = new boolean[N][N];
 
-        for(int i=0; i<N; i++) {
+        int sharkX = 0;
+        int sharkY = 0;
+
+        for (int i = 0; i < N; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
-            for(int j=0; j<N; j++) {
+            for (int j = 0; j < N; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
-                if(map[i][j]==9) shark = new Shark(i,j,2, 0);
-                if(0<map[i][j]&&map[i][j]<=6) {
-                    fishSize.offer(map[i][j]);
+                if (map[i][j] == 9) {
+                    sharkX = i;
+                    sharkY = j;
+                    map[i][j] = 0;
                 }
             }
         }
 
-        exploreFish();
+        int size = 2;
+        int eatCount = 0;
+        int time = 0;
 
+        while (true) {
+            Fish target = findTarget(sharkX, sharkY, size);
+            if (target == null) {
+                break;
+            }
+
+            int targetX = target.x;
+            int targetY = target.y;
+            int targetDistance = target.distance;
+
+            map[targetX][targetY] = 0; // 물고기를 잡아먹음
+
+            eatCount++;
+            if (eatCount == size) {
+                size++;
+                eatCount = 0;
+            }
+
+            time += targetDistance;
+
+            sharkX = targetX;
+            sharkY = targetY;
+        }
 
         bw.write(time + "\n");
-
 
         bw.flush();
         bw.close();
     }
 
-    public void exploreFish() {
-        while(true) {
-            Queue<int[]> queue = new LinkedList<>();
-            PriorityQueue<Fish> fishes = new PriorityQueue<>();
-            boolean[][] visited = new boolean[N][N];
-            queue.add(new int[]{shark.x, shark.y, 0});
-            visited[shark.x][shark.y] = true;
+    private Fish findTarget(int startX, int startY, int size) {
+        boolean[][] visited = new boolean[N][N];
+        visited[startX][startY] = true;
 
-            while (!queue.isEmpty()) {
-                int[] current = queue.poll();
-                int x = current[0];
-                int y = current[1];
-                int cnt = current[2];
+        PriorityQueue<Fish> fishes = new PriorityQueue<>();
+        int maxDistance = Integer.MAX_VALUE;
 
-                for (int i = 0; i < 4; i++) {
-                    int x2 = x + dirR[i];
-                    int y2 = y + dirC[i];
-                    if (x2 < 0 || y2 < 0 || N <= x2 || N <= y2 || map[x2][y2] > shark.size || visited[x2][y2]) continue;
-                    visited[x2][y2] = true;
-                    if (map[x2][y2] != 0 && map[x2][y2] < shark.size)
-                        fishes.offer(new Fish(x2, y2, cnt + 1));
-                    queue.add(new int[]{x2, y2, cnt + 1});
-                }
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(new int[]{startX, startY, 0});
+
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int x = current[0];
+            int y = current[1];
+            int distance = current[2];
+
+            if (distance > maxDistance) {
+                break; // 최단 거리보다 큰 거리로 이동하면 종료
             }
 
-            if(!fishes.isEmpty()) {
-                Fish selected = fishes.poll();
-                map[shark.x][shark.y] = 0;
-                map[selected.x][selected.y] = 9;
-                shark.x = selected.x;
-                shark.y = selected.y;
-                shark.eatCount++;
-                if (shark.eatCount == shark.size) {
-                    shark.eatCount = 0;
-                    shark.size++;
+            for (int i = 0; i < 4; i++) {
+                int nx = x + dirR[i];
+                int ny = y + dirC[i];
+
+                if (nx < 0 || ny < 0 || nx >= N || ny >= N || visited[nx][ny] || map[nx][ny] > size) {
+                    continue;
                 }
-                time += selected.d;
-            } else {
-                break;
+
+                visited[nx][ny] = true;
+                queue.add(new int[]{nx, ny, distance + 1});
+
+                if (map[nx][ny] > 0 && map[nx][ny] < size) {
+                    fishes.offer(new Fish(nx, ny, distance + 1));
+                    maxDistance = distance + 1; // 최단 거리 갱신
+                }
             }
         }
+
+        return fishes.poll();
     }
 
-
-    public static void main (String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         new Main().solution();
     }
 }
