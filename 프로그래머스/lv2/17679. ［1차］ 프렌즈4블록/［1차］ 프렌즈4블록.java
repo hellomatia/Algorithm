@@ -39,11 +39,10 @@ class Solution {
                 char block = map[i][j];
                 //map이 비어있으면 continue
                 if(block=='X') continue;
-                int x = i; // row
-                int y = j; // col
+
                 //시계방향으로 도는 범위를 확인하면서 하나라도 다르면 continue
                 //시계방향 범위 확인
-                if(map[x+1][y]!=block || map[x][y+1]!=block || map[x+1][y+1]!=block) {
+                if(map[i+1][j]!=block || map[i][j+1]!=block || map[i+1][j+1]!=block) {
                     continue;
                 }
                 
