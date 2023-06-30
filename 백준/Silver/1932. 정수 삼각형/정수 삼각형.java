@@ -32,15 +32,11 @@ public class Main {
         int max = 0;
 
         //Top-Down
-        /*
-        for(int i=0; i<n; i++) {
-            LISTopDown(i);
-        }
-         */
-
         //Bottom-Up
+
         if(n!=1) {
-            LISBottomUp();
+            LISTopDown(0, 0);
+            //LISBottomUp();
         }
 
 
@@ -50,9 +46,16 @@ public class Main {
         bw.close();
     }
 
-    public int LISTopDown(int layer) {
+    public int LISTopDown(int x, int y) {
+        if(x==n-1){
+            return dp[x][y];
+        }
 
-        return dp[layer][0];
+        if(dp[x][y]==0) {
+            dp[x][y] = Math.max(LISTopDown(x+1, y), LISTopDown(x+1, y+1))+triangle[x][y];
+        }
+
+        return dp[x][y];
     }
 
     public void LISBottomUp() {
