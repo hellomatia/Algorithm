@@ -10,7 +10,7 @@ public class Main {
 
         boolean odd = false;
 
-        if ((N % 4) % 2 == 1) odd = true;
+        if (N % 2 == 1) odd = true;
 
         if (odd) {
             bw.write("SK");
