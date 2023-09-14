@@ -31,7 +31,6 @@ public class Main {
         Queue<Integer> queue = new LinkedList<>();
 
         for (int j = 0; j < N; j++) {
-            if (visited[j]) continue;
             if (inDegree[j] == 0) {
                 visited[j] = true;
                 queue.offer(j);
