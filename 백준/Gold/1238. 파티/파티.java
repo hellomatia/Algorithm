@@ -37,59 +37,67 @@ public class Main {
             return o1.time - o2.time;
         });
 
-        int[][] minTime = new int[N + 1][N + 1];
-        for (int i = 0; i <= N; i++) {
-            Arrays.fill(minTime[i], Integer.MAX_VALUE);
+        int[] toX = new int[N + 1];
+        Arrays.fill(toX, Integer.MAX_VALUE);
+
+        boolean[] visited = new boolean[N + 1];
+        pq.offer(new Village(X, 0));
+
+        while (!pq.isEmpty()) {
+            Village now = pq.poll();
+
+            if (visited[now.num]) continue;
+
+            visited[now.num] = true;
+
+            for (int i = 1; i <= N; i++) {
+                if (roads[i][now.num] == Integer.MAX_VALUE || visited[i]) continue;
+
+                int newTime = now.time + roads[i][now.num];
+
+                if (toX[i] > newTime) {
+                    toX[i] = newTime;
+                    pq.offer(new Village(i, newTime));
+                }
+            }
         }
 
-        for (int start = 1; start <= N; start++) {
+        int[] fromX = new int[N +1];
+        Arrays.fill(fromX, Integer.MAX_VALUE);
 
-            for (int target = 1; target <= N; target++) {
-                if (roads[start][target] == Integer.MAX_VALUE) continue;
+        Arrays.fill(visited, false);
+        pq.offer(new Village(X, 0));
 
-                minTime[start][target] = roads[start][target];
-                pq.offer(new Village(target, roads[start][target]));
-            }
+        while (!pq.isEmpty()) {
+            Village now = pq.poll();
 
-            boolean[] visited = new boolean[N + 1];
-            visited[start] = true;
+            if (visited[now.num]) continue;
 
-            while (!pq.isEmpty()) {
-                Village now = pq.poll();
+            visited[now.num] = true;
 
-                if (visited[now.num]) continue;
+            for (int i = 1; i <= N; i++) {
+                if (roads[now.num][i] == Integer.MAX_VALUE || visited[i]) continue;
 
-                visited[now.num] = true;
+                int newTime = now.time + roads[now.num][i];
 
-                for (int next = 1; next <= N; next++) {
-                    if (roads[now.num][next] == Integer.MAX_VALUE || visited[next]) continue;
-
-                    int nextTime = now.time + roads[now.num][next];
-
-                    if (minTime[start][next] > nextTime) {
-                        minTime[start][next] = nextTime;
-                        pq.offer(new Village(next, nextTime));
-                    }
-
+                if (fromX[i] > newTime) {
+                    fromX[i] = newTime;
+                    pq.offer(new Village(i, newTime));
                 }
-
             }
         }
 
         int maxTime = 0;
 
         for (int i = 1; i <= N; i++) {
-            int time = minTime[i][X] + minTime[X][i];
+            if (toX[i] == Integer.MAX_VALUE || fromX[i] == Integer.MAX_VALUE) {
+                continue;
+            }
 
-            if (time == Integer.MAX_VALUE) continue;
-
-            maxTime = Math.max(maxTime, time);
+            maxTime = Math.max(maxTime, toX[i] + fromX[i]);
         }
 
-
         bw.write(maxTime + "\n");
-
-
         bw.flush();
         bw.close();
     }
