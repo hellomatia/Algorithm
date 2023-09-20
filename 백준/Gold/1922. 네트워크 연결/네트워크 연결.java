@@ -43,9 +43,8 @@ public class Main {
         while (!lines.isEmpty()) {
             Line line = lines.poll();
 
-            if (find(line.computerNum1) == find(line.computerNum2)) continue;
+            if (!union(line.computerNum1, line.computerNum2)) continue;
 
-            union(line.computerNum1, line.computerNum2);
 
             totalMinCost += line.cost;
         }
@@ -65,7 +64,8 @@ public class Main {
 
         if (x <= y) parent[y] = x;
         else parent[x] = y;
-        return false;
+
+        return true;
     }
 
     public int find(int x) {
