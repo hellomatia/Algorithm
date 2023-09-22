@@ -1,8 +1,10 @@
 import java.io.*;
 import java.util.*;
+
 class Node {
     int num;
     int weight;
+    
     Node (int num, int weight) {
         this.num = num;
         this.weight = weight;
@@ -12,13 +14,14 @@ class Node {
 public class Main {
     static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    int v;
-    ArrayList<Node>[] tree;
-    int[] parentsNode;
-    boolean[] visitedNode;
-    boolean[] visitedTree;
-    int maxDiameter = -1;
-    int furthest;
+    static int v;
+    static ArrayList<Node>[] tree;
+    static int[] parentNode;
+    static boolean[] visitedNode;
+    static boolean[] visitedTree;
+    static int maxDiameter = -1;
+    static int furthest;
+    
     public void solution() throws IOException {
 
         v = Integer.parseInt(bf.readLine());
@@ -28,9 +31,9 @@ public class Main {
             tree[i] = new ArrayList<>();
         }
 
-        parentsNode = new int[v + 1];
+        parentNode = new int[v + 1];
         for (int i = 1; i <= v; i++) {
-            parentsNode[i] = i;
+            parentNode[i] = i;
         }
 
         for (int i = 1; i <= v; i++) {
@@ -49,7 +52,6 @@ public class Main {
         }
 
         visitedTree = new boolean[v + 1];
-
 
         for (int i = 1; i <= v; i++) {
 
@@ -72,18 +74,20 @@ public class Main {
         bw.flush();
         bw.close();
     }
+    
     public void union(int x, int y) {
         x = find(x);
         y = find(y);
 
         if (x == y) return;
 
-        if (x > y) parentsNode[x] = y;
-        else parentsNode[y] = x;
+        if (x > y) parentNode[x] = y;
+        else parentNode[y] = x;
     }
+    
     public int find(int x) {
-        if (parentsNode[x] == x) return x;
-        return find(parentsNode[x]);
+        if (parentNode[x] == x) return x;
+        return find(parentNode[x]);
     }
 
     public void exploreTree(int nodeNum, int weight) {
@@ -99,14 +103,9 @@ public class Main {
             maxDiameter = weight;
             furthest = nodeNum;
         }
-
     }
 
-
-
     public static void main (String[] args) throws IOException {
-
         new Main().solution();
-
     }
 }
