@@ -16,6 +16,7 @@ public class Main {
     ArrayList<Node>[] tree;
     boolean[] visited;
     int maxDiameter = -1;
+    int furthest;
     public void solution() throws IOException {
 
         n = Integer.parseInt(bf.readLine());
@@ -35,30 +36,33 @@ public class Main {
              tree[childNode].add(new Node(parentNode, weight));
         }
 
+        visited = new boolean[n + 1];
+        visited[1] = true;
+        exploreTree(1, 0);
 
-        for (int i = 1; i <= n; i++) {
-            visited = new boolean[n + 1];
-            visited[i] = true;
-            exploreTree(i, 0);
-        }
+        visited = new boolean[n + 1];
+        visited[furthest] = true;
+        exploreTree(furthest, 0);
+
 
         bw.write(maxDiameter + "\n");
         bw.flush();
         bw.close();
-
-
     }
 
-    public void exploreTree(int startNode, int weight) {
+    public void exploreTree(int nodeNum, int weight) {
 
-        for (Node node : tree[startNode]) {
+        for (Node node : tree[nodeNum]) {
             if (!visited[node.num]) {
                 visited[node.num] = true;
                 exploreTree(node.num, weight + node.weight);
             }
         }
 
-        maxDiameter = Math.max(maxDiameter, weight);
+        if (maxDiameter < weight) {
+            maxDiameter = weight;
+            furthest = nodeNum;
+        }
 
     }
 
