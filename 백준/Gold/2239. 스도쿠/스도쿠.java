@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.StringJoiner;
 
 class Point {
 
@@ -32,6 +33,7 @@ public class Main {
     static HashSet<Integer>[][] sudokuBlockHashSet = new HashSet[SUDOKU_MIN_LEN][SUDOKU_MIN_LEN];
 
     static boolean finished = false;
+    static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
         new Main().solution();
@@ -40,9 +42,6 @@ public class Main {
     private void solution() throws IOException {
         init();
         playSudokuGame(0);
-
-        bw.flush();
-        bw.close();
     }
 
     private void init() throws IOException {
@@ -118,7 +117,7 @@ public class Main {
         return 2;
     }
 
-    private void playSudokuGame(int index) {
+    private void playSudokuGame(int index) throws IOException {
         if (finished) {
             return;
         }
@@ -181,12 +180,15 @@ public class Main {
         sudokuBlockHashSet[row][col].remove(value);
     }
 
-    private void printResult() {
+    private void printResult() throws IOException {
         for (int row = 0; row < SUDOKU_MAX_LEN; row++) {
             for (int col = 0; col < SUDOKU_MAX_LEN; col++) {
-                System.out.print(sudokuBoard[row][col]);
+                sb.append(sudokuBoard[row][col]);
             }
-            System.out.println();
+            sb.append("\n");
         }
+        bw.write(String.valueOf(sb));
+        bw.flush();
+        bw.close();
     }
 }
