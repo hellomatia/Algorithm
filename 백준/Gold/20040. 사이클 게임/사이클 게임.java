@@ -84,7 +84,7 @@ public class Main {
         if (parent[x] == x) {
             return x;
         }
-        return find(parent[x]);
+        return parent[x] = find(parent[x]);
     }
 
     private void printResult(int count) throws IOException {
