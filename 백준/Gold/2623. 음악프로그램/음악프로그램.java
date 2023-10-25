@@ -1,23 +1,10 @@
 import java.io.*;
-import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-class Singer {
-    int num;
-    int order;
-
-    Singer(int num, int order) {
-        this.num = num;
-        this.order = order;
-    }
-}
 
 public class Main {
 
@@ -40,7 +27,8 @@ public class Main {
 
     private void solution() throws IOException {
         init();
-        printResult(findOptimizationOrder());
+        findOptimizationOrder();
+        printResult();
     }
 
     private void init() throws IOException {
@@ -95,20 +83,22 @@ public class Main {
         }
     }
 
-    private boolean findOptimizationOrder() {
+    private void findOptimizationOrder() {
         optimizationOrder = new int[N];
         int count = -1;
         while (++count < N) {
             int num = pq.poll();
-            alreadyOrders.add(num);
             if (firstOrders[num].size() != 0) {
-                return false;
+                initQueue();
+                num = pq.poll();
+                if (firstOrders[num].size() != 0) {
+                    return;
+                }
             }
+            alreadyOrders.add(num);
             optimizationOrder[count] = num;
             removeHashSetNum(num);
-            initQueue();
         }
-        return true;
     }
 
     private void removeHashSetNum(int num) {
@@ -117,8 +107,8 @@ public class Main {
                 .forEach(it -> firstOrders[it].remove(num));
     }
 
-    private void printResult(boolean canFind) throws IOException {
-        if (canFind) {
+    private void printResult() throws IOException {
+        if (alreadyOrders.size() == N) {
             for (int num : optimizationOrder) {
                 bw.write(num + "\n");
             }
@@ -128,14 +118,4 @@ public class Main {
         bw.flush();
         bw.close();
     }
-
-    private void printHash() {
-        for(int i = 1; i <= N; i++) {
-            firstOrders[i].stream()
-                    .forEach(it -> System.out.print(it + " "));
-            System.out.println();
-        }
-    }
-
-
 }
