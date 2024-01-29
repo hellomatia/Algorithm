@@ -1,53 +1,48 @@
-
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class Solution {
 	
-	private static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-	private static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-	private static int T;
-	private static int[] memory;
+	private BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+	private BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 	
-	public static void main(String args[]) throws Exception {
-		solution();
+	private String memory;
+	
+	public static void main(String[] args) throws IOException {
+		new Solution().solution();
 	}
 	
-	private static void solution() throws IOException {
-		initT();
+	private void solution() throws IOException {
+		// 테스트 케이스 입력받기
+		int T = Integer.parseInt(bf.readLine());
 		for (int testCase = 1; testCase <= T; testCase++) {
-			initMemory();
-			printResult(testCase, findMinCount());
+			init();
+			printResult(testCase, calcResult());
 		}
-		bw.flush();
 		bw.close();
 	}
 	
-	private static void initT() throws IOException {
-		T = Integer.parseInt(bf.readLine());
+	private void init() throws IOException {
+		memory = bf.readLine();
 	}
 	
-	private static void initMemory() throws IOException {
-		String string = bf.readLine();
-		memory = new int[string.length()];
-		for (int i = 0; i < string.length(); i++) {
-			memory[i] = string.charAt(i) - '0';
-		}
-	}
-	
-	private static int findMinCount() {
-		int nowBit = 0;
-		int count = 0;
-		for (int i = 0; i < memory.length; i++) {
-			if (nowBit != memory[i]) {
-				nowBit = memory[i];
-				count++;
+	private int calcResult() {
+		int result = 0;
+		char now = '0';
+		for (int i = 0; i < memory.length(); i++) {
+			if (now != memory.charAt(i)) {
+				result++;
+				now = memory.charAt(i);
 			}
 		}
-		return count;
+		return result;
 	}
-		
-	private static void printResult(int testCase, int result) throws IOException {
-		bw.write("#"+testCase + " " + result +"\n");
+	
+	private void printResult(int testCase, int result) throws IOException {
+		bw.write("#" + testCase + " " + result + "\n");
+		bw.flush();
 	}
 }
