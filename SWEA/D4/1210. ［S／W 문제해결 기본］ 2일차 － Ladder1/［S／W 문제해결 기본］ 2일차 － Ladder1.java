@@ -1,101 +1,84 @@
-
-import java.io.*;
-import java.util.*;
-
-class Point {
-	int x;
-	int y;
-	
-	Point (int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-	
-}
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.StringTokenizer;
 
 public class Solution {
-
-	private static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-	private static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-	private static int T;
-	private static int[][] map;
-	private static boolean[][] visited;
-	private static Queue<Point> starts;
-	private static int result;
-
-	public static void main(String args[]) throws Exception {
-		solution();
+	
+	private BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+	private BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	
+	private static final int LINE = 1;
+	
+	private int[][] map;
+	private boolean[][] visited;
+	private int target;
+	
+	public static void main(String[] args) throws IOException {
+		new Solution().solution();
 	}
-
-	private static void solution() throws IOException {
-		T = 10;
+	
+	private void solution() throws IOException {
+		int T = 10;
 		for (int testCase = 1; testCase <= T; testCase++) {
-			initMap();
-			while (!starts.isEmpty()) {
-				Point start = starts.poll();
-				if (isResult(start)) {
-					result = start.y;
-				}
-			}
-			printResult(testCase);
-			bw.flush();
+			init();
+			printResult(testCase, calcResult());
 		}
+		bw.flush();
 		bw.close();
 	}
-
-	private static void initT() throws IOException {
-		T = Integer.parseInt(bf.readLine());
-	}
-
-	private static void initMap() throws IOException {
+	
+	private void init() throws IOException {
 		bf.readLine();
 		map = new int[100][100];
-		starts = new LinkedList<>();
-
-		for (int i = 0; i < 100; i++) {
+		
+		for (int i = 0; i < 99; i++) {
 			StringTokenizer st = new StringTokenizer(bf.readLine());
 			for (int j = 0; j < 100; j++) {
 				map[i][j] = Integer.parseInt(st.nextToken());
-				if (i == 0 && map[0][j] == 1) {
-					starts.offer(new Point (0, j));
-				}
 			}
 		}
+		
+		StringTokenizer st = new StringTokenizer(bf.readLine());
+		for (int j = 0; j < 100; j++) {
+			map[99][j] = Integer.parseInt(st.nextToken());
+			if (map[99][j] == 2) {
+				target = j;
+			}
+		}
+		
 	}
 	
-	private static boolean isResult(Point start) {
-		int nextX = start.x;
-		int nextY = start.y;
-		
+	private int calcResult() {
+		int nowX = 99;
+		int nowY = target;
 		visited = new boolean[100][100];
-		
-		while (nextX < 100) {
-			visited[nextX][nextY] = true;
-			if (map[nextX][nextY] == 2) {
-				return true;
-			}
-			if (canMove(nextX, nextY + 1)) {
-				nextY += 1;
+		while (nowX != 0) {
+			visited[nowX][nowY] = true;
+			if (canMoveLeft(nowX, nowY)) {
+				nowY--;
 				continue;
-			} else if (canMove(nextX, nextY - 1)) {
-				nextY -= 1;
+			} else if (canMoveRight(nowX, nowY)) {
+				nowY++;
 				continue;
 			}
-			nextX += 1;
+			nowX--;
 		}
 		
-		return false;
+		return nowY;
 	}
 	
-	private static boolean canMove(int x, int y) {
-		if (x < 0 || y <0 || 100 <= x || 100 <= y || visited[x][y]) {
-			return false;
-		}
-		return map[x][y] != 0;
+	private boolean canMoveLeft(int x, int y) {
+		return 0 <= y - 1 && map[x][y - 1] == LINE && !visited[x][y - 1];
 	}
-
-	private static void printResult(int testCase) throws IOException {
-		bw.write("#" + testCase + " " + result);
-		bw.write("\n");
+	
+	private boolean canMoveRight(int x, int y) {
+		return y + 1 < 100 && map[x][y + 1] == LINE && !visited[x][y + 1];
+	}
+	
+	private void printResult(int testCase, int result) throws IOException {
+		bw.write("#" + testCase + " " + result + "\n");
 	}
 }
