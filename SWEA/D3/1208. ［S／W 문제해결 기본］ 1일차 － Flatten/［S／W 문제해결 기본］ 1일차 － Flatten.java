@@ -1,69 +1,63 @@
-
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Solution {
 	
-	private static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-	private static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-	private static int T, N;
-	private static int min;
-	private static int[] land;
-	private static int boxTotal;
-	private static boolean isFinished;
+	private BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+	private BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 	
-	public static void main(String args[]) throws Exception {
-		solution();
+	private int dumpCount;
+	private int[] boxHight;
+	
+	public static void main(String[] args) throws IOException {
+		new Solution().solution();
 	}
 	
-	private static void solution() throws IOException {
-		T = 10;
+	private void solution() throws IOException {
+		int T = 10;
 		for (int testCase = 1; testCase <= T; testCase++) {
-			initN();
-			initLand();
-			isFinished = false;
-			for (int count = 0; count < N; count++) {
-				toPungTan();
-				if (isFinished) {
-					break;
-				}
-			}
-			printResult(testCase);
+			init();
+			printResult(testCase, calcResult());
 		}
 		bw.flush();
 		bw.close();
 	}
 	
-	private static void initN() throws IOException {
-		N = Integer.parseInt(bf.readLine());
-	}
-	
-	private static void initLand() throws IOException {
-		land = new int[100];
+	private void init() throws IOException {
+		dumpCount = Integer.parseInt(bf.readLine());
 		StringTokenizer st = new StringTokenizer(bf.readLine());
-		for (int index = 0; index < 100; index++) {
-			land[index] = Integer.parseInt(st.nextToken());
-			boxTotal += land[index];
+		boxHight = new int[100];
+		for (int i = 0; i < 100; i++) {
+			boxHight[i] = Integer.parseInt(st.nextToken());
 		}
-		Arrays.sort(land);
-		min = land[99] - land[0];
 	}
 	
-	private static void toPungTan() {
-		if (boxTotal % 100 == 0 && min == 0) {
-			isFinished = true;
-		} else if (boxTotal % 100 != 0 && min == 1) {
-			isFinished = true;
+	private int calcResult() {
+		int diff = 0;
+		for (int i = 0; i < dumpCount; i++) {
+			Arrays.sort(boxHight);
+			diff = calcMinMaxDiff();
+			if (diff == 0 || diff == 1) {
+				return diff;
+			}
+			boxHight[99]--;
+			boxHight[0]++;
 		}
-		land[0]++;
-		land[99]--;
-		Arrays.sort(land);
-		min = land[99] - land[0];
+		Arrays.sort(boxHight);
+		diff = calcMinMaxDiff();
+		return diff;
 	}
 	
+	private int calcMinMaxDiff() {
+		return boxHight[99] - boxHight[0];
+	}
 	
-	private static void printResult(int testCase) throws IOException {
-		bw.write("#"+testCase + " " + min +"\n");
-		
+	private void printResult(int testCase, int result) throws IOException {
+		bw.write("#" + testCase + " " + result + "\n");
 	}
 }
