@@ -1,72 +1,64 @@
-
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.StringTokenizer;
 
 public class Solution {
 	
-	private static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-	private static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-	private static int T, N;
-	private static int[][] map;
+	private BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+	private BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 	
-	public static void main(String args[]) throws Exception {
-		solution();
+	private int N;
+	private int center;
+	private int[][]  farm;
+	
+	public static void main(String[] args) throws IOException {
+		new Solution().solution();
 	}
 	
-	private static void solution() throws IOException {
-		initT();
+	private void solution() throws IOException {
+		int T = Integer.parseInt(bf.readLine());
 		for (int testCase = 1; testCase <= T; testCase++) {
-			initN();
-			initMap();
-			printResult(testCase, findResult());
+			init();
+			printResult(testCase, calcResult(0));
 		}
 		bw.flush();
 		bw.close();
 	}
 	
-	private static void initT() throws IOException {
-		T = Integer.parseInt(bf.readLine());
-	}
-	
-	private static void initN() throws IOException {
+	private void init() throws IOException {
 		N = Integer.parseInt(bf.readLine());
-	}
-	
-	private static void initMap() throws IOException {
-		map = new int[N][N];
-		
+		center = N / 2;
+		farm = new int[N][N];
 		for (int i = 0; i < N; i++) {
-			String string = bf.readLine();
+			String rowValue = bf.readLine();
 			for (int j = 0; j < N; j++) {
-				map[i][j] = string.charAt(j) - '0';
+				farm[i][j] = rowValue.charAt(j) - '0';
 			}
 		}
 	}
 	
-	private static int findResult() throws IOException {
-		int startCol = 0;
-		int startRow = N/2;
-		int result = 0;
-		int index = 0;
-		while (index <= N/2) {
-			for (int col = startCol; col < N - startCol; col++) {
-				result += map[startRow + index][col];
-				result += map[startRow - index][col];
+	private int calcResult(int count) {
+		if (count == center) {
+			int sum = 0;
+			for (int i = 0; i < N; i++) {
+				sum += farm[i][count];
 			}
-			startCol++;
-			index++;
+			return sum;
 		}
 		
-		for (int col = 0; col < N; col++) {
-			result -= map[N / 2][col];
+		int sum = farm[center][count] + farm[center][N - count - 1];
+		for (int i = 1; i <= count; i++) {
+			sum += (farm[center + i][count] + farm[center + i][N - count - 1]);
+			sum += (farm[center - i][count] + farm[center - i][N - count - 1]);
 		}
 		
-		return result;
+		return sum + calcResult(count + 1);
 	}
 	
-	
-	private static void printResult(int testCase, int result) throws IOException {
-		bw.write("#"+testCase + " " + result +"\n");
-		
+	private void printResult(int testCase, int result) throws IOException {
+		bw.write("#" + testCase + " " + result + "\n");
 	}
 }
