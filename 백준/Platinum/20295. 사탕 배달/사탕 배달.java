@@ -37,15 +37,6 @@ public class Main {
             printResult(calcResult(from, to, type));
             from = to;
         }
-
-//        for (int i = 1; i <= 5; i++) {
-//            System.out.println(i);
-//            for (int j = 1; j <= N; j++) {
-//                System.out.println(Arrays.toString(canBuy[i][j]));
-//            }
-//            System.out.println();
-//        }
-
         bw.flush();
         bw.close();
     }
@@ -134,9 +125,6 @@ public class Main {
         }
 
         if (n1 == n2) {
-            if (candyType[n1] == type) {
-                return "PLAY";
-            }
             return "CRY";
         }
 
