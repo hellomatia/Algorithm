@@ -40,9 +40,11 @@ public class Main {
 
         solved = new boolean[N + 1];
 
+        StringBuilder sb = new StringBuilder();
+
         while (!pq.isEmpty()) {
             int now = pq.poll();
-            bw.write(now + " ");
+            sb.append(now).append(" ");
             for (int i = 0; i < questions[now].size(); i++) {
                 int nextNum = questions[now].get(i);
                 if (--inDegrees[nextNum] == 0) {
@@ -51,6 +53,7 @@ public class Main {
             }
         }
 
+        bw.write(sb.toString());
         bw.flush();
         bw.close();
     }
