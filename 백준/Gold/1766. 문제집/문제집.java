@@ -10,16 +10,18 @@ class Question {
 }
 
 public class Main {
-    static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static int[] inDegrees;
     static boolean[] solved;
+
+    public static void main (String[] args) throws IOException {
+        new Main().solution();
+    }
+
     public void solution() throws IOException {
 
-        StringTokenizer st = new StringTokenizer(bf.readLine());
-
-        int N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
+        int N = read();
+        int M = read();
 
         ArrayList<Integer>[] questions = new ArrayList[N + 1];
 
@@ -30,9 +32,8 @@ public class Main {
         inDegrees = new int[N + 1];
 
         for (int i = 1; i <= M; i++) {
-            st = new StringTokenizer(bf.readLine());
-            int q1 = Integer.parseInt(st.nextToken());
-            int q2 = Integer.parseInt(st.nextToken());
+            int q1 = read();
+            int q2 = read();
 
             inDegrees[q2]++;
             questions[q1].add(q2);
@@ -68,15 +69,17 @@ public class Main {
                 pq.offer(new Question(nextNum, inDegrees[nextNum]));
             }
         }
-        
+
         bw.flush();
         bw.close();
     }
 
-
-    public static void main (String[] args) throws IOException {
-
-        new Main().solution();
-
+    private int read() throws IOException {
+        int c, n = System.in.read() & 15;
+        while ((c = System.in.read()) > 32) {
+            n = (n << 3) + (n << 1) + (c & 15);
+        }
+        return n;
     }
+
 }
