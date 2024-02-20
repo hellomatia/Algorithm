@@ -1,13 +1,5 @@
 import java.io.*;
 import java.util.*;
-class Question {
-    int num;
-    int inDegree;
-    public Question(int num, int inDegree) {
-        this.num = num;
-        this.inDegree = inDegree;
-    }
-}
 
 public class Main {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -39,34 +31,24 @@ public class Main {
             questions[q1].add(q2);
         }
 
-        PriorityQueue<Question> pq = new PriorityQueue<>((o1, o2) -> {
-            if (o1.inDegree == o2.inDegree) {
-                return o1.num - o2.num;
-            }
-            return o1.inDegree - o2.inDegree;
-        });
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
 
         for (int i = 1; i <= N; i++) {
-            pq.offer(new Question(i, inDegrees[i]));
+            if (inDegrees[i] != 0) continue;
+            pq.offer(i);
         }
 
         solved = new boolean[N + 1];
 
         while (!pq.isEmpty()) {
-            Question now = pq.poll();
-
-            if (solved[now.num]) {
-                continue;
-            }
-            bw.write(now.num + " ");
-
-            solved[now.num] = true;
-
-            for (int i = 0; i < questions[now.num].size(); i++) {
-                int nextNum = questions[now.num].get(i);
-
+            int now = pq.poll();
+            bw.write(now + " ");
+            for (int i = 0; i < questions[now].size(); i++) {
+                int nextNum = questions[now].get(i);
                 inDegrees[nextNum]--;
-                pq.offer(new Question(nextNum, inDegrees[nextNum]));
+                if (inDegrees[nextNum] == 0) {
+                    pq.offer(nextNum);
+                }
             }
         }
 
@@ -81,5 +63,4 @@ public class Main {
         }
         return n;
     }
-
 }
