@@ -45,8 +45,7 @@ public class Main {
             bw.write(now + " ");
             for (int i = 0; i < questions[now].size(); i++) {
                 int nextNum = questions[now].get(i);
-                inDegrees[nextNum]--;
-                if (inDegrees[nextNum] == 0) {
+                if (--inDegrees[nextNum] == 0) {
                     pq.offer(nextNum);
                 }
             }
