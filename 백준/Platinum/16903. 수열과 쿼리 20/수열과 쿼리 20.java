@@ -117,7 +117,7 @@ public class Main {
 
     private void solution() throws IOException {
         init();
-        calcResult();
+        printResult(calcResult());
     }
 
     private void init() throws IOException {
@@ -125,7 +125,8 @@ public class Main {
         trie = new Trie();
     }
 
-    private void calcResult() throws IOException {
+    private String calcResult() throws IOException {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < N; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
             int command = Integer.parseInt(st.nextToken());
@@ -135,12 +136,14 @@ public class Main {
             } else if (command == 2) {
                 trie.delete(x);
             } else {
-                printResult(trie.query(x));
+                sb.append(trie.query(x)).append("\n");
             }
         }
+        return sb.toString();
     }
 
-    private void printResult(int result) {
-        System.out.println(result);
+    private void printResult(String result) throws IOException {
+        bw.write(result);
+        bw.flush();
     }
 }
