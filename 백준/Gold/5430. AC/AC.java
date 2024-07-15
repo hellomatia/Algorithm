@@ -1,81 +1,82 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.*;
 
 public class Main {
-    public void solution() throws IOException {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int numOfTestCase = Integer.parseInt(bf.readLine());
+    private int T;
+
+    public static void main(String[] args) throws IOException {
+        new Main().solution();
+    }
+
+    private void solution() throws IOException {
+        init();
+        for (int i = 0; i < T; i++) {
+            printAns(calcAns());
+        }
+    }
+
+    private void init() throws IOException {
+        T = Integer.parseInt(bf.readLine());
+    }
+
+    private String calcAns() throws IOException {
+        String command = bf.readLine();
+        Deque<String> dq = new ArrayDeque<>();
+
+        int n = Integer.parseInt(bf.readLine());
+        String arrayString = bf.readLine();
+        arrayString = arrayString.replace("[", "");
+        arrayString = arrayString.replace("]", "");
+
+        for (String num : arrayString.split(",")) {
+            if(num.isEmpty()) continue;
+            dq.offer(num);
+        }
+
         StringBuilder sb = new StringBuilder();
-
-        for(int i=0; i<numOfTestCase; i++) {
-
-            Deque<String> deque = new ArrayDeque<>();
-
-            Queue<Character> fnQueue = new LinkedList<>();
-
-            String fnStr = bf.readLine();
-
-            int countD = 0;
-
-            for(int j=0; j<fnStr.length(); j++) {
-                char function = fnStr.charAt(j);
-                fnQueue.add(function);
-                if(function=='D') countD++;
-            }
-
-            int numCount = Integer.parseInt(bf.readLine());
-
-            String numStr = bf.readLine();
-            numStr = numStr.replace("[","");
-            numStr = numStr.replace("]", "");
-
-            StringTokenizer st = new StringTokenizer(numStr, ",");
-            for(int j=0; j<numCount; j++) {
-                deque.offer(st.nextToken());
-            }
-
-            if(numCount<countD) {
-                sb.append("error\n");
+        sb.append("[");
+        boolean reverse = false;
+        for (String c : command.split("")) {
+            if (c.equals("R")) {
+                reverse = !reverse;
             } else {
-                boolean reverse = false;
-                while(!fnQueue.isEmpty()) {
-                    char function = fnQueue.poll();
-                    if(function=='R') reverse = !reverse;
-                    else{
-                        if(reverse)
-                            deque.pollLast();
-                        else {
-                            deque.pollFirst();
-                        }
-                    }
-                }
-
-                sb.append("[");
-                if(reverse) {
-                    while(!deque.isEmpty()) {
-                        sb.append(deque.pollLast());
-                        if(!deque.isEmpty()) sb.append(",");
-                    }
+                if (dq.isEmpty()) {
+                    return "error";
+                } else if (reverse) {
+                    dq.pollLast();
                 } else {
-                    while(!deque.isEmpty()) {
-                        sb.append(deque.pollFirst());
-                        if(!deque.isEmpty()) sb.append(",");
-                    }
+                    dq.pollFirst();
                 }
-
-                sb.append("]\n");
             }
         }
 
-        bw.write(sb.toString());
+        int size = dq.size();
+        if (size == 0) {
+            return "[]";
+        }
 
-        bw.flush();
-        bw.close();
+        for (int i = 0; i < size; i++) {
+            if (reverse) {
+                sb.append(dq.pollLast()).append(",");
+            } else {
+                sb.append(dq.pollFirst()).append(",");
+            }
+        }
+
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append("]");
+        return sb.toString();
     }
 
-    public static void main (String[] args) throws IOException {
-        new Main().solution();
+    private void printAns(String ans) throws IOException {
+        bw.write(ans + "\n");
+        bw.flush();
     }
 }
