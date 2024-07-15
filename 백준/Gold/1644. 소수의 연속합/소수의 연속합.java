@@ -10,7 +10,8 @@ public class Main {
     private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
     private int N;
-    private List<Integer> primes;
+    private int size;
+    private int[] primes;
 
     public static void main(String[] args) throws IOException {
         new Main().solution();
@@ -41,13 +42,16 @@ public class Main {
             }
         }
 
-        primes = new ArrayList<>();
+        primes = new int[N + 1];
+        int index = 0;
         for (int i = 1; i <= N; i++) {
             if (isPrime[i]) {
-                primes.add(i);
+                primes[index++] = i;
+                size++;
             }
         }
-        primes.add(0);
+        primes[N] = 0;
+        size++;
     }
 
     private String calcAns() {
@@ -56,14 +60,14 @@ public class Main {
         int ans = 0;
 
         int sum = 0;
-        for (;start <= end && end < primes.size();) {
+        for (;start <= end && end < size;) {
             if (sum < N) {
-                sum += primes.get(end++);
+                sum += primes[end++];
             } else {
                 if (sum == N) {
                     ans++;
                 }
-                sum -= primes.get(start++);
+                sum -= primes[start++];
             }
         }
 
