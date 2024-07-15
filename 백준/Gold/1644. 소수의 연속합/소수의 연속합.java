@@ -1,13 +1,13 @@
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.*;
 
 public class Main {
-
-    private BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-    private BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
     private int N;
     private List<Integer> primes;
@@ -18,33 +18,12 @@ public class Main {
 
     private void solution() throws IOException {
         init();
-        printResult(calcResult());
-        bw.close();
+        printAns(calcAns());
     }
 
     private void init() throws IOException {
         N = Integer.parseInt(bf.readLine());
-    }
-
-    private int calcResult() {
-        int result = 0;
         initPrime();
-
-        int start = 0;
-        int end = 0;
-        int sum = 0;
-        while (start <= end && end < primes.size()) {
-            if (sum < N) {
-                sum += primes.get(end++);
-            } else {
-                if (sum == N) {
-                    result++;
-                }
-                sum -= primes.get(start++);
-            }
-        }
-
-        return result;
     }
 
     private void initPrime() {
@@ -71,8 +50,28 @@ public class Main {
         primes.add(0);
     }
 
-    private void printResult(int result) throws IOException {
-        bw.write(result + "\n");
+    private String calcAns() {
+        int start = 0;
+        int end = 0;
+        int ans = 0;
+
+        int sum = 0;
+        for (;start <= end && end < primes.size();) {
+            if (sum < N) {
+                sum += primes.get(end++);
+            } else {
+                if (sum == N) {
+                    ans++;
+                }
+                sum -= primes.get(start++);
+            }
+        }
+
+        return ans + "";
+    }
+
+    private void printAns(String ans) throws IOException {
+        bw.write(ans + "\n");
         bw.flush();
     }
 }
