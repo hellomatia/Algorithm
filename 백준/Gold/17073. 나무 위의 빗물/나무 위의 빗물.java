@@ -43,7 +43,12 @@ public class Main {
     }
 
     private String calcAns() {
-        dfs(1, 1);
+        for (int i = 1; i <= N; i++) {
+            if (adj[i].size() == 1) {
+                leaf++;
+            }
+        }
+
         if (adj[1].size() == 1) {
             leaf--;
         } else if (adj[1].size() == 0) {
@@ -51,16 +56,6 @@ public class Main {
         }
 
         return String.format("%.6f",(double) W / leaf);
-    }
-
-    private void dfs(int now, int from) {
-        if (adj[now].size() == 1) {
-            leaf++;
-        }
-        for (int next : adj[now]) {
-            if (from == next) { continue; }
-            dfs(next, now);
-        }
     }
 
     private void printAns(String ans) throws IOException {
