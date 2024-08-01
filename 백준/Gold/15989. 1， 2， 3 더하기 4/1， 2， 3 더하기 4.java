@@ -1,13 +1,16 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class Main {
+    private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-    private static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-    private static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    private static int T;
-    private static List<Integer> Ns;
-    private static int[][] dp;
+    private int T;
+    private int[] nums;
+    private int[][] dp;
 
     public static void main(String[] args) throws IOException {
         new Main().solution();
@@ -15,51 +18,43 @@ public class Main {
 
     private void solution() throws IOException {
         init();
-        printResult();
-        bw.flush();
-        bw.close();
+        printAns(calcAns());
     }
 
     private void init() throws IOException {
-        initT();
-        Ns = new ArrayList<>();
-        for (int i = 0; i < T; i++) {
-            initN();
-        }
-        initDp();
-    }
-
-    private void initT() throws IOException {
         T = Integer.parseInt(bf.readLine());
-    }
 
-    private void initN() throws IOException {
-        Ns.add(Integer.parseInt(bf.readLine()));
-    }
-
-    private void initDp() {
-        dp = new int[Ns.stream()
-                .mapToInt(it -> it)
-                .max().orElse(1) + 1][4];
-
-        dp[1][1] = 1;
-        dp[2][1] = 1;
-        dp[2][2] = 1;
-        dp[3][1] = 1;
-        dp[3][2] = 1;
-        dp[3][3] = 1;
-
-        for (int index = 4; index < dp.length; index++) {
-            dp[index][1] = dp[index - 1][1];
-            dp[index][2] = dp[index - 2][1] + dp[index - 2][2];
-            dp[index][3] = dp[index - 3][1] + dp[index - 3][2] + dp[index - 3][3];
+        nums = new int[T];
+        for (int i = 0; i < T; i++) {
+            nums[i] = Integer.parseInt(bf.readLine());
         }
     }
 
-    private void printResult() throws IOException {
-        for (int i = 0; i < Ns.size(); i++) {
-            int number = Ns.get(i);
-            bw.write((dp[number][1] + dp[number][2] + dp[number][3]) + "\n");
+    private String calcAns() {
+        dp = new int[10_000 + 10][4];
+        dp[1][1] = 1; // 1
+        dp[2][1] = 1; // 1 + 1
+        dp[2][2] = 1; // 2
+        dp[3][1] = 1; // 1 + 1 + 1
+        dp[3][2] = 1; // 1 + 2
+        dp[3][3] = 1; // 3
+
+        for (int i = 4; i <= 10_000; i++) {
+            dp[i][1] = dp[i - 1][1];
+            dp[i][2] = dp[i - 2][1] + dp[i - 2][2];
+            dp[i][3] = dp[i - 3][1] + dp[i - 3][2] + dp[i - 3][3];
         }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < T; i++) {
+            sb.append(dp[nums[i]][1] + dp[nums[i]][2] + dp[nums[i]][3]).append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    private void printAns(String ans) throws IOException {
+        bw.write(ans + "\n");
+        bw.flush();
     }
 }
