@@ -11,7 +11,6 @@ public class Main {
     private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
     private int N;
-    private int[] cost;
     private PriorityQueue<Edge> pq;
     private int[] parent;
     private long ans;
@@ -28,11 +27,9 @@ public class Main {
     private void init() throws IOException {
         N = Integer.parseInt(bf.readLine());
 
-        cost = new int[N + 1];
         pq = new PriorityQueue<>();
         for (int i = 1; i <= N; i++) {
-            cost[i] = Integer.parseInt(bf.readLine());
-            pq.offer(new Edge(0, i, cost[i]));
+            pq.offer(new Edge(0, i, Integer.parseInt(bf.readLine())));
         }
 
         for (int i = 1; i <= N; i++) {
