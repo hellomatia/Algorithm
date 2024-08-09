@@ -1,83 +1,105 @@
-import java.io.*;
-import java.util.*;
-class City {
-    int num;
-    int cost;
-    City(int num, int cost) {
-        this.num = num;
-        this.cost = cost;
-    }
-}
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static final int INF = Integer.MAX_VALUE;
-    public void solution() throws IOException {
-        int N = Integer.parseInt(bf.readLine());
-        int M = Integer.parseInt(bf.readLine());
+    private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        ArrayList<City>[] citys = new ArrayList[N+1];
+    private static int INF = 987654321;
+    private int N, M;
+    private ArrayList<City>[] cities;
+    private int start, end;
+
+    public static void main(String[] args) throws IOException {
+        new Main().solution();
+    }
+
+    private void solution() throws IOException {
+        init();
+        printAns(calcAns());
+    }
+
+    private void init() throws IOException {
+        N = Integer.parseInt(bf.readLine());
+        M = Integer.parseInt(bf.readLine());
+
+        cities = new ArrayList[N + 1];
         for (int i = 1; i <= N; i++) {
-            citys[i] = new ArrayList<>();
+            cities[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < M; i++) {
             StringTokenizer st = new StringTokenizer(bf.readLine());
-
             int start = Integer.parseInt(st.nextToken());
-            int target = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
             int cost = Integer.parseInt(st.nextToken());
-
-            citys[start].add(new City(target, cost));
+            cities[start].add(new City(end, cost));
         }
 
         StringTokenizer st = new StringTokenizer(bf.readLine());
-        int start = Integer.parseInt(st.nextToken());
-        int target = Integer.parseInt(st.nextToken());
+        start = Integer.parseInt(st.nextToken());
+        end = Integer.parseInt(st.nextToken());
+    }
 
-        PriorityQueue<City> pq = new PriorityQueue<>((o1, o2) -> {
-            return o1.cost - o2.cost;
-        });
+    private String calcAns() {
+        int[] dist = new int[N + 1];
+        Arrays.fill(dist, INF);
 
-        int[] minDist = new int[N + 1];
-        Arrays.fill(minDist, INF);
-
-        for (int i = 0; i < citys[start].size(); i++) {
-            City city = citys[start].get(i);
-            minDist[city.num] = Math.min(minDist[city.num], city.cost);
+        PriorityQueue<City> pq = new PriorityQueue<>();
+        for (int i = 0; i < cities[start].size(); i++) {
+            City city = cities[start].get(i);
+            dist[city.num] = Math.min(dist[city.num], city.cost);
             pq.offer(city);
         }
 
         boolean[] visited = new boolean[N + 1];
         visited[start] = true;
 
-        while(!pq.isEmpty()) {
+        while (!pq.isEmpty()) {
             City now = pq.poll();
-
-            if (visited[now.num]) continue;
+            if (visited[now.num]) {
+                continue;
+            }
             visited[now.num] = true;
 
-            for (int i = 0; i < citys[now.num].size(); i++) {
-                City next = citys[now.num].get(i);
-                int newCost = now.cost + next.cost;
+            for (int i = 0; i < cities[now.num].size(); i++) {
+                City next = cities[now.num].get(i);
+                int cost = next.cost + dist[now.num];
 
-                if (!visited[next.num] && minDist[next.num] > newCost) {
-                    minDist[next.num] = newCost;
-                    pq.offer(new City(next.num, newCost));
+                if (!visited[next.num] && dist[next.num] > cost) {
+                    dist[next.num] = cost;
+                    pq.offer(new City(next.num, cost));
                 }
             }
         }
 
-        bw.write(minDist[target] + "\n");
-        bw.flush();
-        bw.close();
+        return dist[end] + "";
     }
 
+    private void printAns(String ans) throws IOException {
+        bw.write(ans + "\n");
+        bw.flush();
+    }
 
-    public static void main (String[] args) throws IOException {
+    static class City implements Comparable<City> {
+        int num;
+        int cost;
 
-        new Main().solution();
+        public City(int num, int cost) {
+            this.num = num;
+            this.cost = cost;
+        }
 
+        @Override
+        public int compareTo(City o) {
+            return cost - o.cost;
+        }
     }
 }
