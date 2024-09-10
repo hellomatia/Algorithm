@@ -1,85 +1,102 @@
-import java.io.*;
-import java.util.*;
-class Edge {
-    int vertex1;
-    int vertex2;
-    int cost;
-    Edge(int vertex1, int vertex2, int cost) {
-        this.vertex1 = vertex1;
-        this.vertex2 = vertex2;
-        this.cost = cost;
-    }
-}
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static int[] parents;
 
-    public void solution() throws IOException {
+    private static final BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
+    private int V, E;
+    private int[] parent;
+    private PriorityQueue<Edge> pq = new PriorityQueue<>();
+
+    public static void main(String[] args) throws IOException {
+        new Main().solution();
+    }
+
+    private void solution() throws IOException {
+        init();
+        printAns(calcAns());
+    }
+
+    private void init() throws IOException {
         StringTokenizer st = new StringTokenizer(bf.readLine());
-
-        int V = Integer.parseInt(st.nextToken());
-        int E = Integer.parseInt(st.nextToken());
-
-        PriorityQueue<Edge> edges = new PriorityQueue<>((o1, o2) -> {
-            return o1.cost - o2.cost;
-        });
+        V = Integer.parseInt(st.nextToken());
+        E = Integer.parseInt(st.nextToken());
 
         for (int i = 0; i < E; i++) {
             st = new StringTokenizer(bf.readLine());
-
-            int vertex1 = Integer.parseInt(st.nextToken());
-            int vertex2 = Integer.parseInt(st.nextToken());
-            int cost = Integer.parseInt(st.nextToken());
-
-            edges.offer(new Edge(vertex1, vertex2, cost));
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            int edge = Integer.parseInt(st.nextToken());
+            pq.offer(new Edge(from, to, edge));
         }
-
-        parents = new int[V + 1];
-        for (int i = 1; i <= V; i++) {
-            parents[i] = i;
-        }
-
-
-        int ans = 0;
-
-        while(!edges.isEmpty()) {
-            Edge now = edges.poll();
-
-            if (!union(now.vertex1, now.vertex2)) {
-                continue;
-            }
-
-            ans += now.cost;
-        }
-
-        bw.write(ans + "\n");
-        bw.flush();
-        bw.close();
     }
 
-    public boolean union(int x, int y) {
+    private String calcAns() {
+        parent = new int[V + 1];
+        for (int i = 1; i <= V; i++) {
+            parent[i] = i;
+        }
+
+        int ans = 0;
+        while (!pq.isEmpty()) {
+            Edge now = pq.poll();
+            if (union(now.from, now.to)) {
+                ans += now.cost;
+            }
+        }
+
+        return String.valueOf(ans);
+    }
+
+    private boolean union(int x, int y) {
         x = find(x);
         y = find(y);
 
-        if (x == y) return false;
+        if (x == y) {
+            return false;
+        }
 
-        if (x <= y) parents[y] = x;
-        else parents[x] = y;
+        if (x < y) {
+            parent[y] = x;
+        } else {
+            parent[x] = y;
+        }
         return true;
     }
 
-    public int find(int x) {
-        if (parents[x] == x) return x;
-        return find(parents[x]);
+    private int find(int x) {
+        if (parent[x] == x) {
+            return x;
+        }
+        return parent[x] = find(parent[x]);
     }
 
+    private void printAns(String ans) throws IOException {
+        bw.write(ans);
+        bw.flush();
+    }
 
-    public static void main (String[] args) throws IOException {
+    private static class Edge implements Comparable<Edge> {
+        int from;
+        int to;
+        int cost;
 
-        new Main().solution();
+        Edge(int from, int to, int cost) {
+            this.from = from;
+            this.to = to;
+            this.cost = cost;
+        }
 
+        @Override
+        public int compareTo(Edge o) {
+            return this.cost - o.cost;
+        }
     }
 }
