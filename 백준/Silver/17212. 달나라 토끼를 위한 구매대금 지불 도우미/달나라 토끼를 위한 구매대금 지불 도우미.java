@@ -27,7 +27,6 @@ public class Main {
     private String calcAns() {
         dp = N < 7 ? new int[8] : new int[N + 1];
 
-        Arrays.fill(dp, Integer.MAX_VALUE);
         dp[0] = 0;
         dp[1] = 1;
         dp[2] = 1;
@@ -38,7 +37,7 @@ public class Main {
         dp[7] = 1;
 
         for (int i = 8; i <= N; i++) {
-            dp[i] = Math.min(dp[i], dp[i - 1] + 1);
+            dp[i] = dp[i - 1] + 1;
             dp[i] = Math.min(dp[i], dp[i - 2] + 1);
             dp[i] = Math.min(dp[i], dp[i - 5] + 1);
             dp[i] = Math.min(dp[i], dp[i - 7] + 1);
