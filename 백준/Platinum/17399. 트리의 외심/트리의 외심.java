@@ -8,11 +8,131 @@ public class Main {
     static int maxHeight;
     static int N;
     
+    static class FastReader {
+        private static final int BUFFER_SIZE = 1 << 16;
+        private DataInputStream din;
+        private byte[] buffer;
+        private int bufferPointer, bytesRead;
+ 
+        public FastReader() {
+            din = new DataInputStream(System.in);
+            buffer = new byte[BUFFER_SIZE];
+            bufferPointer = bytesRead = 0;
+        }
+ 
+        private void fillBuffer() throws IOException {
+            bytesRead = din.read(buffer, bufferPointer = 0, BUFFER_SIZE);
+            if (bytesRead == -1)
+                buffer[0] = -1;
+        }
+ 
+        private byte read() throws IOException {
+            if (bufferPointer == bytesRead)
+                fillBuffer();
+            return buffer[bufferPointer++];
+        }
+ 
+        public void close() throws IOException {
+            if (din == null)
+                return;
+            din.close();
+        }
+ 
+        public int nextInt() throws IOException {
+            int ret = 0;
+            byte c = read();
+            while (c <= ' ')
+                c = read();
+            boolean neg = (c == '-');
+            if (neg)
+                c = read();
+            do {
+                ret = ret * 10 + c - '0';
+            } while ((c = read()) >= '0' && c <= '9');
+            if (neg)
+                return -ret;
+            return ret;
+        }
+    }
+    
+    static class FastWriter {
+        private static final int BUFFER_SIZE = 1 << 16;
+        private DataOutputStream dout;
+        private byte[] buffer;
+        private int pointer;
+ 
+        public FastWriter() {
+            dout = new DataOutputStream(System.out);
+            buffer = new byte[BUFFER_SIZE];
+            pointer = 0;
+        }
+ 
+        private void writeBuffer() throws IOException {
+            if (pointer > 0) {
+                dout.write(buffer, 0, pointer);
+                pointer = 0;
+            }
+        }
+ 
+        public void flush() throws IOException {
+            writeBuffer();
+            dout.flush();
+        }
+ 
+        public void close() throws IOException {
+            flush();
+            dout.close();
+        }
+ 
+        public void writeInt(int i) throws IOException {
+            if (i == -1) {
+                write((byte)'-');
+                write((byte)'1');
+                write((byte)'\n');
+                return;
+            }
+            
+            if (i == 0) {
+                write((byte)'0');
+                write((byte)'\n');
+                return;
+            }
+            
+            if (i < 0) {
+                write((byte)'-');
+                i = -i;
+            }
+            
+            int digits = 0;
+            int temp = i;
+            while (temp > 0) {
+                digits++;
+                temp /= 10;
+            }
+            
+            while (digits > 0) {
+                int pow = 1;
+                for (int j = 1; j < digits; j++) pow *= 10;
+                write((byte)(i / pow + '0'));
+                i %= pow;
+                digits--;
+            }
+            write((byte)'\n');
+        }
+ 
+        private void write(byte b) throws IOException {
+            if (pointer == buffer.length) {
+                writeBuffer();
+            }
+            buffer[pointer++] = b;
+        }
+    }
+    
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+        FastReader fr = new FastReader();
+        FastWriter fw = new FastWriter();
         
-        N = Integer.parseInt(br.readLine());
+        N = fr.nextInt();
         
         // Initialize tree
         tree = new ArrayList[N + 1];
@@ -22,9 +142,8 @@ public class Main {
         
         // Read edges
         for (int i = 0; i < N - 1; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
+            int x = fr.nextInt();
+            int y = fr.nextInt();
             tree[x].add(y);
             tree[y].add(x);
         }
@@ -39,17 +158,18 @@ public class Main {
         fillParent();
         
         // Process queries
-        int Q = Integer.parseInt(br.readLine());
+        int Q = fr.nextInt();
         while (Q-- > 0) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-            int c = Integer.parseInt(st.nextToken());
+            int a = fr.nextInt();
+            int b = fr.nextInt();
+            int c = fr.nextInt();
             
-            sb.append(findCircumcenter(a, b, c)).append('\n');
+            fw.writeInt(findCircumcenter(a, b, c));
         }
         
-        System.out.print(sb);
+        fw.flush();
+        fw.close();
+        fr.close();
     }
     
     static void dfs(int current, int prev) {
@@ -104,7 +224,6 @@ public class Main {
     static int getNodeAtDistance(int start, int end, int distance) {
         int lcaNode = lca(start, end);
         
-        // If target is in the path from start to LCA
         if (depth[start] - depth[lcaNode] >= distance) {
             int current = start;
             for (int i = maxHeight; i >= 0; i--) {
@@ -114,9 +233,7 @@ public class Main {
                 }
             }
             return current;
-        }
-        // If target is in the path from LCA to end
-        else {
+        } else {
             int distToLca = depth[start] - depth[lcaNode];
             int remaining = distance - distToLca;
             int distFromLca = depth[end] - depth[lcaNode];
@@ -135,17 +252,10 @@ public class Main {
     }
     
     static int findCircumcenter(int a, int b, int c) {
-        // Get LCAs between each pair
-        int lcaAB = lca(a, b);
-        int lcaBC = lca(b, c);
-        int lcaCA = lca(c, a);
-        
-        // Get distances
         int distAB = getDistance(a, b);
         int distBC = getDistance(b, c);
         int distCA = getDistance(c, a);
         
-        // Check mid points of each path
         int[] candidates = new int[6];
         candidates[0] = getNodeAtDistance(a, b, distAB / 2);
         candidates[1] = getNodeAtDistance(a, b, (distAB + 1) / 2);
@@ -157,7 +267,6 @@ public class Main {
         int result = -1;
         int minDist = Integer.MAX_VALUE;
         
-        // Check each candidate
         for (int candidate : candidates) {
             if (candidate == -1) continue;
             
