@@ -2,9 +2,6 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static List<Integer> move;
-    static int[][][] dp;
-
     public static void main(String[] args) throws IOException {
         new Main().solution();
     }
@@ -12,23 +9,63 @@ public class Main {
     private void solution() throws IOException {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
              BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
-            move = new ArrayList<>();
-            init(br, move);
+            List<Integer> positions = new ArrayList<>();
+            init(br, positions);
 
-            if (move.size() == 0) {
+            if (positions.size() == 0) {
                 bw.write("0");
                 bw.flush();
                 return;
             }
 
-            dp = new int[5][5][move.size()];
-            for (int i = 0; i < 5; i++) {
-                for (int j = 0; j < 5; j++) {
-                    Arrays.fill(dp[i][j], -1);
+            // DP 배열: [현재 단계][왼쪽 발 위치][오른쪽 발 위치]
+            int[][][] dp = new int[positions.size() + 1][5][5];
+            for (int[][] row : dp) {
+                for (int[] subrow : row) {
+                    Arrays.fill(subrow, 100000000);
                 }
             }
 
-            bw.write(String.valueOf(solve(0, 0, 0)));
+            // 초기 상태: 두 발 모두 0 위치
+            dp[0][0][0] = 0;
+
+            for (int step = 0; step < positions.size(); step++) {
+                int target = positions.get(step);
+
+                for (int left = 0; left < 5; left++) {
+                    for (int right = 0; right < 5; right++) {
+                        // 유효하지 않은 상태 건너뛰기
+                        if (dp[step][left][right] >= 100000000) continue;
+
+                        // 두 발이 같은 위치면 건너뛰기 (첫 단계 제외)
+                        if (left == right && step > 0) continue;
+
+                        // 왼쪽 발 이동
+                        if (right != target) {
+                            int newCost = dp[step][left][right] + calcCost(left, target);
+                            dp[step+1][target][right] = Math.min(dp[step+1][target][right], newCost);
+                        }
+
+                        // 오른쪽 발 이동
+                        if (left != target) {
+                            int newCost = dp[step][left][right] + calcCost(right, target);
+                            dp[step+1][left][target] = Math.min(dp[step+1][left][target], newCost);
+                        }
+                    }
+                }
+            }
+
+            // 마지막 단계에서 최소 힘 찾기
+            int minForce = 100000000;
+            for (int left = 0; left < 5; left++) {
+                for (int right = 0; right < 5; right++) {
+                    // 두 발이 같은 위치면 건너뛰기
+                    if (left == right && positions.size() > 0) continue;
+                    minForce = Math.min(minForce, dp[positions.size()][left][right]);
+                }
+            }
+
+            bw.write(String.valueOf(minForce));
             bw.flush();
         }
     }
@@ -40,17 +77,6 @@ public class Main {
             if (pos == 0) break;
             positions.add(pos);
         }
-    }
-
-    private int solve(int left, int right, int cnt) {
-        if (cnt == move.size()) return 0;
-        if (dp[left][right][cnt] != -1) return dp[left][right][cnt];
-
-        int leftMove = solve(move.get(cnt), right, cnt + 1) + calcCost(left, move.get(cnt));
-        int rightMove = solve(left, move.get(cnt), cnt + 1) + calcCost(right, move.get(cnt));
-        dp[left][right][cnt] = Math.min(leftMove, rightMove);
-
-        return dp[left][right][cnt];
     }
 
     private int calcCost(int from, int to) {
